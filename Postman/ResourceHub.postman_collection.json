@@ -1,0 +1,234 @@
+{
+  "info": {
+    "name": "ResourceHub",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "recursoId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Crear recurso",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "if (pm.response.code === 201) {",
+              "    var recurso = pm.response.json();",
+              "    pm.collectionVariables.set(\"recursoId\", String(recurso.id));",
+              "    pm.test(\"ID asignado\", function () {",
+              "        pm.expect(recurso.id).to.be.a(\"number\");",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/recursos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"titulo\": \"Introduccion a Java\",\n    \"url\": \"https://dev.java/learn/\",\n    \"tipo\": \"Curso\",\n    \"categoria\": \"Programacion\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar recursos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Recurso en la lista\", function () {",
+              "    var id = Number(pm.collectionVariables.get(\"recursoId\"));",
+              "    pm.expect(pm.response.json().some(r => r.id === id)).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/recursos"
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar recurso por ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"ID correcto\", function () {",
+              "    pm.expect(pm.response.json().id).to.eql(Number(pm.collectionVariables.get(\"recursoId\")));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/recursos/{{recursoId}}"
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar recurso",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Titulo actualizado\", function () {",
+              "    pm.expect(pm.response.json().titulo).to.eql(\"Guia de Java\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/recursos/{{recursoId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"titulo\": \"Guia de Java\",\n    \"url\": \"https://dev.java/learn/\",\n    \"tipo\": \"Tutorial\",\n    \"categoria\": \"Desarrollo de software\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar categoria",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Categoria actualizada\", function () {",
+              "    pm.expect(pm.response.json().categoria).to.eql(\"Java\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/recursos/{{recursoId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"categoria\": \"Java\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar recurso",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 204\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/recursos/{{recursoId}}"
+      },
+      "response": []
+    },
+    {
+      "name": "Verificar eliminacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 404\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/recursos/{{recursoId}}"
+      },
+      "response": []
+    }
+  ]
+}
